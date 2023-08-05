@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Food Order App</string>
+    <string name="admin_dashboard">Admin Dashboard</string>
+    <string name="waves_of_food">Waves Of Food</string>
+    <string name="design_by_aman_kumar">Design by\nAman Kumar</string>
+    <string name="login_to_your_admin_dashboard">Login To Your\nAdmin Dashboard</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+</resources>
