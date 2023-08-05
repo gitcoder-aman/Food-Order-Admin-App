@@ -40,6 +40,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -87,12 +88,13 @@ fun LoginScreen(navHostController: NavHostController) {
     ) {
         Column(
             modifier = Modifier
+                .align(Center)
                 .fillMaxSize()
                 .verticalScroll(scrollState)
                 .padding(top = 30.dp, start = 20.dp, end = 20.dp),
             horizontalAlignment = CenterHorizontally
         ) {
-            Header()
+            Header(stringResource(R.string.login_to_your_admin_dashboard))
 
             TextFieldLayout(
                 email,
@@ -135,7 +137,7 @@ fun LoginScreen(navHostController: NavHostController) {
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-            LoginBtnAndText(noAccount = {
+            LoginBtnAndText(stringResource(id = R.string.login), stringResource(id = R.string.don_t_have_an_account),noAccount = {
                 navHostController.navigate(signup)
             }, login = {
                 navHostController.navigate(home)
@@ -155,7 +157,7 @@ fun LoginScreen(navHostController: NavHostController) {
 }
 
 @Composable
-fun Header() {
+fun Header(titleText : String) {
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -176,7 +178,7 @@ fun Header() {
             )
         )
         Text(
-            text = stringResource(R.string.login_to_your_admin_dashboard), style = TextStyle(
+            text = titleText, style = TextStyle(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.W400,
                 fontFamily = lato_bold,
@@ -329,7 +331,7 @@ fun RowIconButton(buttonName: String, @DrawableRes icon: Int, modifier: Modifier
 }
 
 @Composable
-fun LoginBtnAndText(noAccount: () -> Unit, login: () -> Unit) {
+fun LoginBtnAndText(btnText:String,accountText:String,noAccount: () -> Unit, login: () -> Unit) {
     Column(horizontalAlignment = CenterHorizontally, verticalArrangement = Arrangement.Center) {
         Button(
             onClick = login,
@@ -346,8 +348,8 @@ fun LoginBtnAndText(noAccount: () -> Unit, login: () -> Unit) {
             )
         ) {
             Text(
-                text = stringResource(R.string.login), style = TextStyle(
-                    fontSize = 20.sp,
+                text = btnText, style = TextStyle(
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.W400,
                     fontFamily = yeon_sung_regular,
                     color = Color.White
@@ -356,7 +358,7 @@ fun LoginBtnAndText(noAccount: () -> Unit, login: () -> Unit) {
         }
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = stringResource(R.string.don_t_have_an_account), style = TextStyle(
+            text = accountText, style = TextStyle(
                 fontSize = 10.sp,
                 fontWeight = FontWeight.W400,
                 fontFamily = lato_bold,

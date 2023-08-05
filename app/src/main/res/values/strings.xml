@@ -4,6 +4,7 @@
     <string name="waves_of_food">Waves Of Food</string>
     <string name="design_by_aman_kumar">Design by\nAman Kumar</string>
     <string name="login_to_your_admin_dashboard">Login To Your\nAdmin Dashboard</string>
+    <string name="sign_up_here_for_you">Sign Up Here For You\nAdmin Dashboard</string>
     <string name="password">Password</string>
     <string name="email">Email</string>
     <string name="continue_with">Continue With</string>
@@ -12,4 +13,11 @@
     <string name="google">Google</string>
     <string name="login">Login</string>
     <string name="don_t_have_an_account">Don\'t Have an Account?</string>
+    <string name="choose_your_location">Choose your Location</string>
+    <string name="name_of_owner">Name of Owner</string>
+    <string name="name_of_restaurant">Name of Restaurant</string>
+    <string name="location">Location</string>
+    <string name="create_account">Create Account</string>
+    <string name="already_have_an_account">Already Have An Account?</string>
+    <string name="email_or_phone_number">Email or Phone Number</string>
 </resources>

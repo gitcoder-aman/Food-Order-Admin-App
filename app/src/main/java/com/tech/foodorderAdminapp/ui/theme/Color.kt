@@ -12,4 +12,4 @@ val Pink40 = Color(0xFF7D5260)
 
 
 val GreenColor = Color(0xFF6CCB7B)
-val darkWhiteColor = Color(0xFFF8F5F5)
+val darkWhiteColor = Color(0xFFFDFDFD)
