@@ -1,6 +1,9 @@
 package com.tech.foodorderAdminapp.screens
 
+import androidx.compose.ui.geometry.Size
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,10 +13,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowCircleDown
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +36,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,9 +49,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.tech.foodorderAdminapp.R
+import com.tech.foodorderAdminapp.common.TextDesignByAman
+import com.tech.foodorderAdminapp.common.lato_regular
 import com.tech.foodorderAdminapp.common.yeon_sung_regular
 import com.tech.foodorderAdminapp.navigation.home
 import com.tech.foodorderAdminapp.navigation.login
@@ -55,9 +79,7 @@ fun SignupScreen(navHostController: NavHostController) {
     var password by remember {
         mutableStateOf("")
     }
-    var location by remember {
-        mutableStateOf("")
-    }
+
 
     Box(
         modifier = Modifier
@@ -89,13 +111,7 @@ fun SignupScreen(navHostController: NavHostController) {
                     )
                 )
             }
-            TextFieldLayout(
-                text = location,
-                textFieldTitle = stringResource(R.string.location),
-                icon = R.drawable.location,
-                onValueChange = {
-                    location = it
-                })
+            LocationLayout()
             Spacer(modifier = Modifier.height(10.dp))
 
             TextFieldLayout(
@@ -142,17 +158,105 @@ fun SignupScreen(navHostController: NavHostController) {
                     navHostController.navigate(home)
                 })
 
-            Text(
-                text = stringResource(R.string.design_by_aman_kumar), style = TextStyle(
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.W400,
-                    fontFamily = yeon_sung_regular,
-                    color = GreenColor
-                ), textAlign = TextAlign.Center, modifier = Modifier.padding(vertical = 20.dp)
-            )
+            TextDesignByAman()
 
         }
 
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LocationLayout() {
+
+    val listOptions =
+        listOf("Delhi", "Mumbai", "Chennai", "Kolkata", "Hyderabad", "Bengaluru", "Pune","Bihar","Lucknow","Punjab")
+    var expandedState by remember {
+        mutableStateOf(false)
+    }
+    var selectionOption by remember {
+        mutableStateOf(listOptions[0])
+    }
+    var mTextFieldSize by remember {
+        mutableStateOf(Size.Zero)
+    }
+
+    val mContext = LocalContext.current
+
+    TextField(
+        value = selectionOption,
+        onValueChange = { selectionOption = it },
+        modifier = Modifier
+            .padding(0.dp)
+            .shadow(elevation = 1.dp, shape = RoundedCornerShape(8.dp))
+            .fillMaxWidth()
+            .onGloballyPositioned { coordinates ->
+                // This value is used to assign to
+                // the DropDown the same width
+                mTextFieldSize = coordinates.size.toSize()
+            },
+        shape = RoundedCornerShape(8.dp),
+        textStyle = TextStyle(fontFamily = lato_regular),
+        colors = TextFieldDefaults.textFieldColors(
+            textColor = Color.Black,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            containerColor = Color.White,
+            cursorColor = GreenColor,
+            focusedTrailingIconColor = Color.Black,
+            selectionColors = TextSelectionColors(
+                handleColor = GreenColor,
+                backgroundColor = GreenColor
+            )
+        ),
+        readOnly = true,
+        placeholder = {
+            Text(
+                stringResource(R.string.location_choose), style = TextStyle(
+                    color = Color.Gray,
+                    fontSize = 10.sp,
+                    fontFamily = lato_regular,
+                    textAlign = TextAlign.Center
+                ), textAlign = TextAlign.Center
+            )
+        },
+        leadingIcon = {
+            Icon(
+                painter = painterResource(id = R.drawable.location),
+                contentDescription = "",
+                tint = Color.Unspecified
+            )
+        },
+        trailingIcon = {
+            Icon(
+                imageVector = Icons.Filled.ArrowCircleDown,
+                contentDescription = "",
+                tint = GreenColor,
+                modifier = Modifier.clickable { expandedState = !expandedState }
+            )
+        }
+    )
+    DropdownMenu(
+        expanded = expandedState, onDismissRequest = { expandedState = false },
+        modifier = Modifier
+            .width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
+            .background(darkWhiteColor)
+    ) {
+
+        listOptions.forEach { eachoption ->
+            DropdownMenuItem(text = {
+                Text(
+                    text = eachoption, color = Color.Black, style = TextStyle(
+                        fontSize = 14.sp,
+                        fontFamily = lato_regular,
+                        fontWeight = FontWeight.W400
+                    )
+                )
+            }, onClick = {
+                selectionOption = eachoption
+                expandedState = false
+            })
+        }
     }
 }
 

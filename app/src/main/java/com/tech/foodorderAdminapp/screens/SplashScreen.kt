@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.tech.foodorderAdminapp.R
+import com.tech.foodorderAdminapp.common.TextDesignByAman
 import com.tech.foodorderAdminapp.common.lato_bold
 import com.tech.foodorderAdminapp.common.lato_regular
 import com.tech.foodorderAdminapp.common.yeon_sung_regular
@@ -76,13 +77,6 @@ fun SplashScreen(navHostController : NavHostController) {
                 )
             )
         }
-        Text(
-            text = stringResource(R.string.design_by_aman_kumar), style = TextStyle(
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W400,
-                fontFamily = yeon_sung_regular,
-                color = GreenColor
-            ), textAlign = TextAlign.Center, modifier = Modifier.padding(vertical = 20.dp)
-        )
+        TextDesignByAman()
     }
 }

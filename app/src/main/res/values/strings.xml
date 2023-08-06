@@ -20,4 +20,14 @@
     <string name="create_account">Create Account</string>
     <string name="already_have_an_account">Already Have An Account?</string>
     <string name="email_or_phone_number">Email or Phone Number</string>
+    <string name="location_choose">Location Choose</string>
+    <string name="pending_order">Pending Order</string>
+    <string name="completed_order">Completed Order</string>
+    <string name="whole_time_earning">Whole Time Earning</string>
+    <string name="add_menu">Add Menu</string>
+    <string name="all_items_menu">All Items Menu</string>
+    <string name="profile">Profile</string>
+    <string name="create_new_user">Create New User</string>
+    <string name="order_dispatch">Order Dispatch</string>
+    <string name="log_out">Log Out</string>
 </resources>

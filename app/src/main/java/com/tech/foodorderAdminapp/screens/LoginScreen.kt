@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.tech.foodorderAdminapp.R
+import com.tech.foodorderAdminapp.common.TextDesignByAman
 import com.tech.foodorderAdminapp.common.lato_bold
 import com.tech.foodorderAdminapp.common.lato_regular
 import com.tech.foodorderAdminapp.common.yeon_sung_regular
@@ -67,7 +68,6 @@ import com.tech.foodorderAdminapp.navigation.signup
 import com.tech.foodorderAdminapp.ui.theme.FoodOrderAppTheme
 import com.tech.foodorderAdminapp.ui.theme.GreenColor
 import com.tech.foodorderAdminapp.ui.theme.darkWhiteColor
-import kotlin.math.sign
 
 @Composable
 fun LoginScreen(navHostController: NavHostController) {
@@ -78,6 +78,7 @@ fun LoginScreen(navHostController: NavHostController) {
     var password by remember {
         mutableStateOf("")
     }
+
     val scrollState = rememberScrollState()
 
     Box(
@@ -137,27 +138,24 @@ fun LoginScreen(navHostController: NavHostController) {
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-            LoginBtnAndText(stringResource(id = R.string.login), stringResource(id = R.string.don_t_have_an_account),noAccount = {
-                navHostController.navigate(signup)
-            }, login = {
-                navHostController.navigate(home)
-            })
+            LoginBtnAndText(
+                stringResource(id = R.string.login),
+                stringResource(id = R.string.don_t_have_an_account),
+                noAccount = {
+                    navHostController.navigate(signup)
+                },
+                login = {
+                    navHostController.navigate(home)
+                })
 
-            Text(
-                text = stringResource(R.string.design_by_aman_kumar), style = TextStyle(
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.W400,
-                    fontFamily = yeon_sung_regular,
-                    color = GreenColor
-                ), textAlign = TextAlign.Center, modifier = Modifier.padding(vertical = 20.dp)
-            )
+            TextDesignByAman()
         }
     }
 
 }
 
 @Composable
-fun Header(titleText : String) {
+fun Header(titleText: String) {
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -331,7 +329,12 @@ fun RowIconButton(buttonName: String, @DrawableRes icon: Int, modifier: Modifier
 }
 
 @Composable
-fun LoginBtnAndText(btnText:String,accountText:String,noAccount: () -> Unit, login: () -> Unit) {
+fun LoginBtnAndText(
+    btnText: String,
+    accountText: String,
+    noAccount: () -> Unit,
+    login: () -> Unit
+) {
     Column(horizontalAlignment = CenterHorizontally, verticalArrangement = Arrangement.Center) {
         Button(
             onClick = login,
