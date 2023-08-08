@@ -1,6 +1,7 @@
 package com.tech.foodorderAdminapp.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,8 +20,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.CloudDone
+import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.MonetizationOn
 import androidx.compose.material.icons.outlined.PendingActions
+import androidx.compose.material.icons.outlined.PersonAddAlt
+import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -33,6 +37,7 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -42,10 +47,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.tech.foodorderAdminapp.R
 import com.tech.foodorderAdminapp.common.TextDesignByAman
 import com.tech.foodorderAdminapp.common.yeon_sung_regular
+import com.tech.foodorderAdminapp.navigation.add_menu
+import com.tech.foodorderAdminapp.navigation.all_menu_show
 import com.tech.foodorderAdminapp.ui.theme.FoodOrderAppTheme
 import com.tech.foodorderAdminapp.ui.theme.GreenColor
 import com.tech.foodorderAdminapp.ui.theme.darkWhiteColor
@@ -88,7 +94,9 @@ fun HomeScreen(navHostController: NavHostController) {
                         .weight(0.5f),
                     cardName = stringResource(R.string.add_menu),
                     cardIcon = Icons.Outlined.AddCircleOutline
-                )
+                ) {
+                    navHostController.navigate(add_menu)
+                }
 
                 EachCardLayout(
                     modifier = Modifier
@@ -97,7 +105,9 @@ fun HomeScreen(navHostController: NavHostController) {
                         .weight(0.5f),
                     cardName = stringResource(R.string.all_items_menu),
                     cardIcon = Icons.Outlined.Visibility
-                )
+                ) {
+                    navHostController.navigate(all_menu_show)
+                }
             }
             Spacer(modifier = Modifier.height(10.dp))
             Row(
@@ -120,7 +130,7 @@ fun HomeScreen(navHostController: NavHostController) {
                         .padding(5.dp)
                         .weight(0.5f),
                     cardName = stringResource(R.string.create_new_user),
-                    cardIcon = Icons.Outlined.Visibility
+                    cardIcon = Icons.Outlined.PersonAddAlt
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -135,7 +145,7 @@ fun HomeScreen(navHostController: NavHostController) {
                         .padding(5.dp)
                         .weight(0.5f),
                     cardName = stringResource(R.string.order_dispatch),
-                    cardIcon = Icons.Outlined.AddCircleOutline
+                    cardIcon = Icons.Outlined.ShoppingBag
                 )
 
                 EachCardLayout(
@@ -144,7 +154,7 @@ fun HomeScreen(navHostController: NavHostController) {
                         .padding(5.dp)
                         .weight(0.5f),
                     cardName = stringResource(R.string.log_out),
-                    cardIcon = Icons.Outlined.Visibility
+                    cardIcon = Icons.Outlined.Logout
                 )
             }
             TextDesignByAman()
@@ -154,9 +164,11 @@ fun HomeScreen(navHostController: NavHostController) {
 }
 
 @Composable
-fun Header() {
+private fun Header() {
     Row(
-        modifier = Modifier.padding(top = 10.dp).fillMaxWidth(),
+        modifier = Modifier
+            .padding(top = 10.dp)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         Icon(
@@ -254,10 +266,16 @@ fun CardColumnContent(
 }
 
 @Composable
-fun EachCardLayout(modifier: Modifier = Modifier, cardName: String, cardIcon: ImageVector) {
+fun EachCardLayout(
+    modifier: Modifier = Modifier,
+    cardName: String,
+    cardIcon: ImageVector,
+    onClick: () -> Unit = {}
+) {
 
     Card(
         modifier = modifier
+            .clickable { onClick() }
             .width(200.dp)
             .height(150.dp),
         shape = RoundedCornerShape(16.dp), elevation = CardDefaults.cardElevation(1.dp)
@@ -289,8 +307,8 @@ fun EachCardLayout(modifier: Modifier = Modifier, cardName: String, cardIcon: Im
 @Preview
 fun HomePreview() {
     FoodOrderAppTheme {
-        val navHostController = rememberNavController()
-
-        HomeScreen(navHostController = navHostController)
+//        val navHostController = rememberNavController()
+//
+//        HomeScreen(navHostController = navHostController)
     }
 }

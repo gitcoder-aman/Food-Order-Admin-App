@@ -70,5 +70,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.6.0")
     implementation("androidx.compose.material:material-icons-extended")  //extend icons file in compose
     implementation("androidx.compose.runtime:runtime-livedata:1.4.3")
+    //for image picker
+    implementation("io.coil-kt:coil-compose:1.3.2")
+
 
 }

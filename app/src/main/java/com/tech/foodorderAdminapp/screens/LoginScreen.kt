@@ -217,10 +217,10 @@ fun TextFieldLayout(
                 handleColor = GreenColor,
                 backgroundColor = GreenColor
             )
-        ), placeholder = {
+        ), label = {
             Text(
                 textFieldTitle, style = TextStyle(
-                    color = Color.Gray,
+                    color = Color.Black,
                     fontSize = 10.sp,
                     fontFamily = lato_regular,
                     textAlign = TextAlign.Center

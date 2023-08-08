@@ -30,4 +30,11 @@
     <string name="create_new_user">Create New User</string>
     <string name="order_dispatch">Order Dispatch</string>
     <string name="log_out">Log Out</string>
+    <string name="item_name">Item Name</string>
+    <string name="item_price">Item Price</string>
+    <string name="select_item_image">Select Item Image</string>
+    <string name="add_items">Add Items</string>
+    <string name="short_description">Short Description</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="all_items">All Items</string>
 </resources>
