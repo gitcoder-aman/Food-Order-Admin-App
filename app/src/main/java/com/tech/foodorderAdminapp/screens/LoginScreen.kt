@@ -98,7 +98,7 @@ fun LoginScreen(navHostController: NavHostController) {
             Header(stringResource(R.string.login_to_your_admin_dashboard))
 
             TextFieldLayout(
-                email,
+                text = email,
                 stringResource(R.string.email),
                 R.drawable.mail,
                 onValueChange = {
@@ -107,7 +107,7 @@ fun LoginScreen(navHostController: NavHostController) {
 
             Spacer(modifier = Modifier.height(10.dp))
             TextFieldLayout(
-                password,
+                text = password,
                 stringResource(id = R.string.password),
                 R.drawable.lock,
                 onValueChange = {

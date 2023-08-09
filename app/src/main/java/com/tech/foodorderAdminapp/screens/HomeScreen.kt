@@ -52,6 +52,9 @@ import com.tech.foodorderAdminapp.common.TextDesignByAman
 import com.tech.foodorderAdminapp.common.yeon_sung_regular
 import com.tech.foodorderAdminapp.navigation.add_menu
 import com.tech.foodorderAdminapp.navigation.all_menu_show
+import com.tech.foodorderAdminapp.navigation.create_user_admin
+import com.tech.foodorderAdminapp.navigation.out_for_delivery
+import com.tech.foodorderAdminapp.navigation.profile
 import com.tech.foodorderAdminapp.ui.theme.FoodOrderAppTheme
 import com.tech.foodorderAdminapp.ui.theme.GreenColor
 import com.tech.foodorderAdminapp.ui.theme.darkWhiteColor
@@ -122,7 +125,10 @@ fun HomeScreen(navHostController: NavHostController) {
                         .weight(0.5f),
                     cardName = stringResource(R.string.profile),
                     cardIcon = Icons.Outlined.AccountCircle
-                )
+                ){
+                    navHostController.navigate(profile)
+                }
+
 
                 EachCardLayout(
                     modifier = Modifier
@@ -131,7 +137,9 @@ fun HomeScreen(navHostController: NavHostController) {
                         .weight(0.5f),
                     cardName = stringResource(R.string.create_new_user),
                     cardIcon = Icons.Outlined.PersonAddAlt
-                )
+                ){
+                    navHostController.navigate(create_user_admin)
+                }
             }
             Spacer(modifier = Modifier.height(10.dp))
             Row(
@@ -146,7 +154,9 @@ fun HomeScreen(navHostController: NavHostController) {
                         .weight(0.5f),
                     cardName = stringResource(R.string.order_dispatch),
                     cardIcon = Icons.Outlined.ShoppingBag
-                )
+                ){
+                    navHostController.navigate(out_for_delivery)
+                }
 
                 EachCardLayout(
                     modifier = Modifier

@@ -37,4 +37,20 @@
     <string name="short_description">Short Description</string>
     <string name="ingredients">Ingredients</string>
     <string name="all_items">All Items</string>
+    <string name="out_for_delivery">Out For Delivery</string>
+    <string name="customer_name">Customer Name</string>
+    <string name="payment">Payment</string>
+    <string name="not_received">Not Received</string>
+    <string name="delivered">Delivered</string>
+    <string name="received">Received</string>
+    <string name="online">Online</string>
+    <string name="cash">Cash</string>
+    <string name="admin_profile">Admin Profile</string>
+    <string name="name">Name</string>
+    <string name="address">Address</string>
+    <string name="phone">Phone</string>
+    <string name="click_here_to_edit">Click Here to Edit</string>
+    <string name="edit_your_profile">Edit Your Profile</string>
+    <string name="save_profile">Save Profile</string>
+    <string name="create_new_user_admin">Create New User Admin</string>
 </resources>

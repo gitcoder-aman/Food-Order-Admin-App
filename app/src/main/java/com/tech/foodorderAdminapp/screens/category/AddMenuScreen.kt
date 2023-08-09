@@ -52,9 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.tech.foodorderAdminapp.R
-import com.tech.foodorderAdminapp.common.lato_bold
 import com.tech.foodorderAdminapp.common.lato_regular
 import com.tech.foodorderAdminapp.common.yeon_sung_regular
 import com.tech.foodorderAdminapp.ui.theme.FoodOrderAppTheme
@@ -80,7 +78,7 @@ fun AddMenuScreen(navHostController: NavHostController) {
     ) {
         Column(
             modifier = Modifier
-                .padding(5.dp)
+                .padding(10.dp)
                 .align(Alignment.Center)
                 .fillMaxSize()
                 .verticalScroll(scrollState),
@@ -114,7 +112,8 @@ fun AddMenuScreen(navHostController: NavHostController) {
 
             ShortDescription()
 
-            AddItemButton{
+            Spacer(modifier = Modifier.height(10.dp))
+            AddItemButton(stringResource(id = R.string.add_items)){
 
             }
 
@@ -134,9 +133,11 @@ fun CategoryHeader(titleText: String,backOnClick: () -> Unit) {
             painter = painterResource(id = R.drawable.arrow_left),
             contentDescription = "",
             tint = Color.Unspecified,
-            modifier = Modifier.clickable {
-                backOnClick()
-            }
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .clickable {
+                    backOnClick()
+                }
         )
         Text(
             text = titleText, style = TextStyle(
@@ -154,6 +155,7 @@ fun CategoryHeader(titleText: String,backOnClick: () -> Unit) {
 fun AddItemTextField(
     text: String,
     titleText: String,
+    leadingIcon: @Composable (() -> Unit) = {},
     onValueChange: (String) -> Unit
 ) {
     TextField(
@@ -187,6 +189,7 @@ fun AddItemTextField(
                 ), textAlign = TextAlign.Center
             )
         },
+        leadingIcon = leadingIcon ,
         readOnly = if (titleText == stringResource(id = R.string.select_item_image)) true else false,
     )
 }
@@ -274,7 +277,6 @@ fun ShortDescription() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
     ) {
         Text(
             text = stringResource(id = R.string.short_description), style = TextStyle(
@@ -313,7 +315,7 @@ fun ShortDescription() {
 }
 
 @Composable
-fun AddItemButton(addItemOnClick: () -> Unit) {
+fun AddItemButton(buttonText : String,addItemOnClick: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -322,7 +324,7 @@ fun AddItemButton(addItemOnClick: () -> Unit) {
             onClick = addItemOnClick,
             modifier = Modifier
                 .height(50.dp)
-                .width(150.dp),
+                .width(200.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = GreenColor
             ),
@@ -333,7 +335,7 @@ fun AddItemButton(addItemOnClick: () -> Unit) {
             )
         ) {
             Text(
-                text = stringResource(id = R.string.add_items), style = TextStyle(
+                text = buttonText, style = TextStyle(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.W400,
                     fontFamily = yeon_sung_regular,

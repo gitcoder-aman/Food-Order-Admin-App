@@ -10,6 +10,9 @@ import com.tech.foodorderAdminapp.screens.SignupScreen
 import com.tech.foodorderAdminapp.screens.SplashScreen
 import com.tech.foodorderAdminapp.screens.category.AddMenuScreen
 import com.tech.foodorderAdminapp.screens.category.AllItemMenuScreen
+import com.tech.foodorderAdminapp.screens.category.CreateUserAdminScreen
+import com.tech.foodorderAdminapp.screens.category.OutForDeliveryScreen
+import com.tech.foodorderAdminapp.screens.category.ProfileScreen
 
 @Composable
 fun FoodAdminNavigation(){
@@ -34,6 +37,15 @@ fun FoodAdminNavigation(){
         composable(all_menu_show){
             AllItemMenuScreen(navHostController = navHostController )
         }
+        composable(out_for_delivery){
+            OutForDeliveryScreen(navHostController = navHostController )
+        }
+        composable(profile){
+            ProfileScreen(navHostController = navHostController )
+        }
+        composable(create_user_admin){
+            CreateUserAdminScreen(navHostController = navHostController )
+        }
     }
 }
 
@@ -43,3 +55,6 @@ const val signup = "signup_screen"
 const val home = "home_screen"
 const val add_menu = "add_menu_screen"
 const val all_menu_show = "all_menu_show_screen"
+const val out_for_delivery = "out_for_delivery_screen"
+const val profile = "profile_screen"
+const val create_user_admin = "create_user_admin_screen"

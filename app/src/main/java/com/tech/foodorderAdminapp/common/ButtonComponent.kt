@@ -34,7 +34,7 @@ fun ButtonComponent(modifier: Modifier = Modifier,
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         elevation = elevation,
-        shape = RoundedCornerShape(100.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = color
     ) {
         Text(
