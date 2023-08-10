@@ -1,11 +1,14 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
+    id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
     namespace = "com.tech.foodorderAdminapp"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.tech.foodorderAdminapp"
@@ -30,11 +33,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -67,11 +70,46 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
+    //navigation
     implementation("androidx.navigation:navigation-compose:2.6.0")
+
     implementation("androidx.compose.material:material-icons-extended")  //extend icons file in compose
     implementation("androidx.compose.runtime:runtime-livedata:1.4.3")
-    //for image picker
+
+    //for image picker coil
     implementation("io.coil-kt:coil-compose:1.3.2")
 
+    //firebase
 
+    implementation("com.google.firebase:firebase-database-ktx:20.2.2")
+    implementation("com.google.firebase:firebase-storage-ktx:20.2.1")
+    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+
+
+    // Dependency Injection
+    implementation("com.google.dagger:hilt-android:2.46.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.46.1")
+    implementation("androidx.hilt:hilt-work:1.0.0")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")  //hilt viewModel
+
+    //hilt viewModel
+//    implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+
+    // Lifecycle
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0-alpha01")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0-alpha01")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0-alpha01")
+
+    //Coroutine
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    //livedata
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+}
+kapt {
+    correctErrorTypes
+    true
 }

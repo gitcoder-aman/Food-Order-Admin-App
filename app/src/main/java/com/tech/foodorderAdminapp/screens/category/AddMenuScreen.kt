@@ -37,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,13 +53,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.tech.foodorderAdminapp.R
+import com.tech.foodorderAdminapp.common.CommonDialog
 import com.tech.foodorderAdminapp.common.lato_regular
 import com.tech.foodorderAdminapp.common.yeon_sung_regular
+import com.tech.foodorderAdminapp.firebase.firebaseRealtimeDb.RealtimeModelResponse
+import com.tech.foodorderAdminapp.firebase.firebaseRealtimeDb.ui.RealtimeViewModel
+import com.tech.foodorderAdminapp.firebase.utils.ResultState
 import com.tech.foodorderAdminapp.ui.theme.FoodOrderAppTheme
 import com.tech.foodorderAdminapp.ui.theme.GreenColor
 import com.tech.foodorderAdminapp.ui.theme.darkWhiteColor
+import com.tech.foodorderAdminapp.util.showMsg
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun AddMenuScreen(navHostController: NavHostController) {
@@ -71,6 +80,13 @@ fun AddMenuScreen(navHostController: NavHostController) {
     }
     val scrollState = rememberScrollState()
 
+    val scope = rememberCoroutineScope()
+    val viewModel : RealtimeViewModel = hiltViewModel()
+    val context = LocalContext.current
+
+    val isDialog = remember {
+        mutableStateOf(false)
+    }
 
     Box(
         modifier = Modifier
@@ -117,9 +133,35 @@ fun AddMenuScreen(navHostController: NavHostController) {
             Spacer(modifier = Modifier.height(10.dp))
             AddItemButton(stringResource(id = R.string.add_items)) {
                 //here perform through button
+                //in save data in firebase realtime database
+                scope.launch(Dispatchers.Main) {
+                    viewModel.insert(
+                        RealtimeModelResponse.RealtimeItems(
+                            itemName = itemName,
+                            price = itemPrice
+                        )
+                    ).collect{
+                        when(it){
+                            is ResultState.Success->{
+                                context.showMsg(msg = it.data)
+                                isDialog.value = false
+                            }
+                            is ResultState.Failure->{
+                                context.showMsg(msg = it.msg.toString())
+                                isDialog.value = false
+                            }
+                            is ResultState.Loading->{
+                                isDialog.value = true
+                            }
+                        }
+                    }
+                }
             }
 
         }
+    }
+    if(isDialog.value){
+        CommonDialog()
     }
 }
 
@@ -352,7 +394,6 @@ fun AddItemButton(buttonText: String, addItemOnClick: () -> Unit) {
 }
 
 @Composable
-@Preview
 fun AddMenuPreview() {
     FoodOrderAppTheme {
 //        val navHostController = rememberNavController()
