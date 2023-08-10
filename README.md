@@ -1,6 +1,6 @@
 # Food-Order-Admin-App
 Food Order Admin App in Jetpack compose kotlin android
-Ui Screens
+Ui Screens Design
 
 ![WhatsApp Image 2023-08-10 at 10 25 19 (2)](https://github.com/gitcoder-aman/Food-Order-Admin-App/assets/96575890/48d0462f-82fc-4480-9992-6b1eb57fa608)
 ![WhatsApp Image 2023-08-10 at 10 25 20](https://github.com/gitcoder-aman/Food-Order-Admin-App/assets/96575890/8e9ce3ac-3bac-4e01-8e0e-def77f3257a3)
