@@ -37,7 +37,6 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -54,6 +53,7 @@ import com.tech.foodorderAdminapp.navigation.add_menu
 import com.tech.foodorderAdminapp.navigation.all_menu_show
 import com.tech.foodorderAdminapp.navigation.create_user_admin
 import com.tech.foodorderAdminapp.navigation.out_for_delivery
+import com.tech.foodorderAdminapp.navigation.pending_order
 import com.tech.foodorderAdminapp.navigation.profile
 import com.tech.foodorderAdminapp.ui.theme.FoodOrderAppTheme
 import com.tech.foodorderAdminapp.ui.theme.GreenColor
@@ -82,7 +82,7 @@ fun HomeScreen(navHostController: NavHostController) {
             Header()
             Spacer(modifier = Modifier.height(10.dp))
 
-            StatusCardLayout()
+            StatusCardLayout(navHostController)
             Spacer(modifier = Modifier.height(10.dp))
 
             Row(
@@ -199,7 +199,7 @@ private fun Header() {
 }
 
 @Composable
-fun StatusCardLayout() {
+fun StatusCardLayout(navHostController: NavHostController) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -212,19 +212,25 @@ fun StatusCardLayout() {
                 icon = Icons.Outlined.PendingActions,
                 centerText = stringResource(R.string.pending_order),
                 bottomText = "30"
-            )
+            ){
+                navHostController.navigate(pending_order)
+            }
             CardColumnContent(
                 modifier = Modifier.weight(0.33f),
                 icon = Icons.Outlined.CloudDone,
                 centerText = stringResource(R.string.completed_order),
                 bottomText = "10"
-            )
+            ){
+
+            }
             CardColumnContent(
                 modifier = Modifier.weight(0.33f),
                 icon = Icons.Outlined.MonetizationOn,
                 centerText = stringResource(R.string.whole_time_earning),
                 bottomText = "$100"
-            )
+            ){
+
+            }
         }
     }
 }
@@ -234,11 +240,12 @@ fun CardColumnContent(
     modifier: Modifier,
     icon: ImageVector,
     centerText: String,
-    bottomText: String
+    bottomText: String,
+    onClick: () -> Unit
 ) {
 
     Column(
-        modifier = modifier.padding(15.dp),
+        modifier = modifier.padding(15.dp).clickable { onClick() },
         horizontalAlignment = CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {

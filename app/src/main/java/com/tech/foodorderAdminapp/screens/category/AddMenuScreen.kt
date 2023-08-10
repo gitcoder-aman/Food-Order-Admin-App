@@ -7,6 +7,7 @@ import android.os.Build
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -96,14 +97,15 @@ fun AddMenuScreen(navHostController: NavHostController) {
                 titleText = stringResource(id = R.string.item_name),
                 onValueChange = {
                     itemName = it
-                })
+                },icon = R.drawable.food_blank)
+            
             Spacer(modifier = Modifier.height(5.dp))
             AddItemTextField(
                 text = itemPrice,
                 titleText = stringResource(id = R.string.item_price),
                 onValueChange = {
                     itemPrice = it
-                })
+                },icon = R.drawable.currency)
 
             Spacer(modifier = Modifier.height(5.dp))
 
@@ -113,8 +115,8 @@ fun AddMenuScreen(navHostController: NavHostController) {
             ShortDescription()
 
             Spacer(modifier = Modifier.height(10.dp))
-            AddItemButton(stringResource(id = R.string.add_items)){
-
+            AddItemButton(stringResource(id = R.string.add_items)) {
+                //here perform through button
             }
 
         }
@@ -122,7 +124,7 @@ fun AddMenuScreen(navHostController: NavHostController) {
 }
 
 @Composable
-fun CategoryHeader(titleText: String,backOnClick: () -> Unit) {
+fun CategoryHeader(titleText: String, backOnClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -155,7 +157,7 @@ fun CategoryHeader(titleText: String,backOnClick: () -> Unit) {
 fun AddItemTextField(
     text: String,
     titleText: String,
-    leadingIcon: @Composable (() -> Unit) = {},
+    @DrawableRes icon: Int,
     onValueChange: (String) -> Unit
 ) {
     TextField(
@@ -189,7 +191,10 @@ fun AddItemTextField(
                 ), textAlign = TextAlign.Center
             )
         },
-        leadingIcon = leadingIcon ,
+        leadingIcon = {
+            Icon(painter = painterResource(icon), contentDescription = "", tint = GreenColor)
+        },
+
         readOnly = if (titleText == stringResource(id = R.string.select_item_image)) true else false,
     )
 }
@@ -292,7 +297,7 @@ fun ShortDescription() {
             titleText = stringResource(R.string.short_description),
             onValueChange = {
                 shortDesc = it
-            })
+            },icon = R.drawable.description)
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -309,13 +314,13 @@ fun ShortDescription() {
             titleText = stringResource(R.string.ingredients),
             onValueChange = {
                 ingredients = it
-            })
+            }, icon = R.drawable.ingredients)
 
     }
 }
 
 @Composable
-fun AddItemButton(buttonText : String,addItemOnClick: () -> Unit) {
+fun AddItemButton(buttonText: String, addItemOnClick: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center

@@ -53,4 +53,6 @@
     <string name="edit_your_profile">Edit Your Profile</string>
     <string name="save_profile">Save Profile</string>
     <string name="create_new_user_admin">Create New User Admin</string>
+    <string name="pending_orders">Pending Orders</string>
+    <string name="accept">Accept</string>
 </resources>

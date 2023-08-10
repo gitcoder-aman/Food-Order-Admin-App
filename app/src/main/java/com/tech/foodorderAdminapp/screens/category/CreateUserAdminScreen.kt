@@ -65,13 +65,7 @@ fun CreateUserAdminScreen(navHostController: NavHostController) {
             AddItemTextField(
                 text = userName,
                 titleText = stringResource(id = R.string.name),
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.usernew),
-                        contentDescription = "",
-                        tint = Color.Unspecified
-                    )
-                },
+                icon = R.drawable.usernew,
                 onValueChange = {
                     userName = it
                 })
@@ -80,13 +74,7 @@ fun CreateUserAdminScreen(navHostController: NavHostController) {
             AddItemTextField(
                 text = userEmailOrPhone,
                 titleText = stringResource(id = R.string.email_or_phone_number),
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.mail),
-                        contentDescription = "",
-                        tint = Color.Unspecified
-                    )
-                },
+                icon = R.drawable.mail,
                 onValueChange = {
                     userEmailOrPhone = it
                 })
@@ -95,13 +83,7 @@ fun CreateUserAdminScreen(navHostController: NavHostController) {
             AddItemTextField(
                 text = userPassword,
                 titleText = stringResource(id = R.string.password),
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.lock),
-                        contentDescription = "",
-                        tint = Color.Unspecified
-                    )
-                },
+                icon = R.drawable.lock,
                 onValueChange = {
                     userPassword = it
                 })

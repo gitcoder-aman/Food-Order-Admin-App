@@ -12,6 +12,7 @@ import com.tech.foodorderAdminapp.screens.category.AddMenuScreen
 import com.tech.foodorderAdminapp.screens.category.AllItemMenuScreen
 import com.tech.foodorderAdminapp.screens.category.CreateUserAdminScreen
 import com.tech.foodorderAdminapp.screens.category.OutForDeliveryScreen
+import com.tech.foodorderAdminapp.screens.category.PendingOrderScreen
 import com.tech.foodorderAdminapp.screens.category.ProfileScreen
 
 @Composable
@@ -46,6 +47,9 @@ fun FoodAdminNavigation(){
         composable(create_user_admin){
             CreateUserAdminScreen(navHostController = navHostController )
         }
+        composable(pending_order){
+            PendingOrderScreen(navHostController = navHostController )
+        }
     }
 }
 
@@ -58,3 +62,4 @@ const val all_menu_show = "all_menu_show_screen"
 const val out_for_delivery = "out_for_delivery_screen"
 const val profile = "profile_screen"
 const val create_user_admin = "create_user_admin_screen"
+const val pending_order = "pending_order_screen"
