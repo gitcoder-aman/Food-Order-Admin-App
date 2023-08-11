@@ -79,6 +79,9 @@ class RealtimeDbRepository @Inject constructor(
         val map = HashMap<String,Any>()
         map["itemName"] = realtimeModel.items?.itemName!!
         map["price"] = realtimeModel.items.price
+        map["description"] = realtimeModel.items.description
+        map["itemIngredients"] = realtimeModel.items.itemIngredients
+        map["itemImage"] = realtimeModel.items.itemImage
 
         db.child(realtimeModel.key!!).updateChildren(map).addOnCompleteListener {
             trySend(ResultState.Success("item update Successfully"))

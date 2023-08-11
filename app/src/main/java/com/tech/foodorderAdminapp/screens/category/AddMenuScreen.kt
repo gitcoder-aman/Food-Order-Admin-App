@@ -5,6 +5,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -34,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +45,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -49,8 +54,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -78,14 +83,24 @@ fun AddMenuScreen(navHostController: NavHostController) {
     var itemPrice by remember {
         mutableStateOf("")
     }
+    var itemIngredients by remember {
+        mutableStateOf("")
+    }
+    var description by remember {
+        mutableStateOf("")
+    }
     val scrollState = rememberScrollState()
 
     val scope = rememberCoroutineScope()
-    val viewModel : RealtimeViewModel = hiltViewModel()
+    val viewModel: RealtimeViewModel = hiltViewModel()
     val context = LocalContext.current
 
     val isDialog = remember {
         mutableStateOf(false)
+    }
+    val focusRequester = FocusRequester()
+    LaunchedEffect(key1 = true) {
+        focusRequester.requestFocus()
     }
 
     Box(
@@ -109,58 +124,79 @@ fun AddMenuScreen(navHostController: NavHostController) {
             Spacer(modifier = Modifier.height(10.dp))
 
             AddItemTextField(
+                modifier = Modifier.focusRequester(focusRequester),
                 text = itemName,
                 titleText = stringResource(id = R.string.item_name),
                 onValueChange = {
                     itemName = it
-                },icon = R.drawable.food_blank)
-            
+                }, icon = R.drawable.food_blank
+            )
+
             Spacer(modifier = Modifier.height(5.dp))
             AddItemTextField(
                 text = itemPrice,
                 titleText = stringResource(id = R.string.item_price),
                 onValueChange = {
                     itemPrice = it
-                },icon = R.drawable.currency)
+                }, icon = R.drawable.currency
+            )
 
             Spacer(modifier = Modifier.height(5.dp))
 
             SelectItemImage()
             Spacer(modifier = Modifier.height(5.dp))
 
-            ShortDescription()
+            ShortDescription(itemIngredients, description, onDescChange = { desc ->
+                description = desc
+            }, onItemIngredientsChange = { item ->
+                itemIngredients = item
+            })
 
             Spacer(modifier = Modifier.height(10.dp))
             AddItemButton(stringResource(id = R.string.add_items)) {
-                //here perform through button
-                //in save data in firebase realtime database
-                scope.launch(Dispatchers.Main) {
-                    viewModel.insert(
-                        RealtimeModelResponse.RealtimeItems(
-                            itemName = itemName,
-                            price = itemPrice
-                        )
-                    ).collect{
-                        when(it){
-                            is ResultState.Success->{
-                                context.showMsg(msg = it.data)
-                                isDialog.value = false
-                            }
-                            is ResultState.Failure->{
-                                context.showMsg(msg = it.msg.toString())
-                                isDialog.value = false
-                            }
-                            is ResultState.Loading->{
-                                isDialog.value = true
+
+                if (itemName.isNotEmpty() && itemPrice.isNotEmpty()) {
+                    //here perform through button
+                    //in save data in firebase realtime database
+                    scope.launch(Dispatchers.Main) {
+                        viewModel.insert(
+
+                            RealtimeModelResponse.RealtimeItems(
+                                itemName = itemName,
+                                price = itemPrice,
+                                description = description,
+                                itemIngredients = itemIngredients
+                            )
+                        ).collect {
+                            when (it) {
+                                is ResultState.Success -> {
+                                    context.showMsg(msg = it.data)
+                                    isDialog.value = false
+                                    itemName = ""
+                                    itemPrice = ""
+                                    itemIngredients = ""
+                                    description = ""
+                                }
+
+                                is ResultState.Failure -> {
+                                    context.showMsg(msg = it.msg.toString())
+                                    isDialog.value = false
+                                }
+
+                                is ResultState.Loading -> {
+                                    isDialog.value = true
+                                }
                             }
                         }
                     }
+                }else{
+                    Toast.makeText(context, "Item Name & Price must insert.", Toast.LENGTH_SHORT).show()
                 }
             }
 
         }
     }
-    if(isDialog.value){
+    if (isDialog.value) {
         CommonDialog()
     }
 }
@@ -197,6 +233,7 @@ fun CategoryHeader(titleText: String, backOnClick: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddItemTextField(
+    modifier: Modifier = Modifier,
     text: String,
     titleText: String,
     @DrawableRes icon: Int,
@@ -205,7 +242,7 @@ fun AddItemTextField(
     TextField(
         value = text,
         onValueChange = onValueChange,
-        modifier = Modifier
+        modifier = modifier
             .padding(0.dp)
             .shadow(elevation = 1.dp, shape = RoundedCornerShape(8.dp))
             .fillMaxWidth(),
@@ -222,6 +259,9 @@ fun AddItemTextField(
                 handleColor = GreenColor,
                 backgroundColor = GreenColor
             )
+        ),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = if (titleText == stringResource(id = R.string.item_price)) KeyboardType.Number else KeyboardType.Text
         ),
         placeholder = {
             Text(
@@ -313,14 +353,13 @@ fun SelectItemImage() {
 }
 
 @Composable
-fun ShortDescription() {
+fun ShortDescription(
+    itemIngredients: String,
+    description: String,
+    onDescChange: (String) -> Unit,
+    onItemIngredientsChange: (String) -> Unit
+) {
 
-    var shortDesc by remember {
-        mutableStateOf("")
-    }
-    var ingredients by remember {
-        mutableStateOf("")
-    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -335,11 +374,12 @@ fun ShortDescription() {
         Spacer(modifier = Modifier.height(10.dp))
 
         AddItemTextField(
-            text = shortDesc,
+            text = description,
             titleText = stringResource(R.string.short_description),
             onValueChange = {
-                shortDesc = it
-            },icon = R.drawable.description)
+                onDescChange(it)
+            }, icon = R.drawable.description
+        )
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -352,11 +392,12 @@ fun ShortDescription() {
         )
         Spacer(modifier = Modifier.height(10.dp))
         AddItemTextField(
-            text = ingredients,
+            text = itemIngredients,
             titleText = stringResource(R.string.ingredients),
             onValueChange = {
-                ingredients = it
-            }, icon = R.drawable.ingredients)
+                onItemIngredientsChange(it)
+            }, icon = R.drawable.ingredients
+        )
 
     }
 }

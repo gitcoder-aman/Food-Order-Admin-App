@@ -2,6 +2,7 @@
 
 package com.tech.foodorderAdminapp.screens
 
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,6 +47,7 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -56,26 +59,46 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.common.internal.service.Common
 import com.tech.foodorderAdminapp.R
+import com.tech.foodorderAdminapp.common.CommonDialog
 import com.tech.foodorderAdminapp.common.TextDesignByAman
 import com.tech.foodorderAdminapp.common.lato_bold
 import com.tech.foodorderAdminapp.common.lato_regular
 import com.tech.foodorderAdminapp.common.yeon_sung_regular
+import com.tech.foodorderAdminapp.firebase.firebaseAuth.AuthUserModel
+import com.tech.foodorderAdminapp.firebase.firebaseAuth.ui.AuthViewModel
+import com.tech.foodorderAdminapp.firebase.utils.ResultState
 import com.tech.foodorderAdminapp.navigation.home
 import com.tech.foodorderAdminapp.navigation.signup
 import com.tech.foodorderAdminapp.ui.theme.FoodOrderAppTheme
 import com.tech.foodorderAdminapp.ui.theme.GreenColor
 import com.tech.foodorderAdminapp.ui.theme.darkWhiteColor
+import com.tech.foodorderAdminapp.util.showMsg
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(navHostController: NavHostController) {
 
-    var email by remember {
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var isDialog by remember {
+        mutableStateOf(false)
+    }
+
+    if (isDialog) {
+        CommonDialog()
+    }
+
+    var email by rememberSaveable {
         mutableStateOf("")
     }
-    var password by remember {
+    var password by rememberSaveable {
         mutableStateOf("")
     }
 
@@ -145,7 +168,35 @@ fun LoginScreen(navHostController: NavHostController) {
                     navHostController.navigate(signup)
                 },
                 login = {
-                    navHostController.navigate(home)
+                    if(email.isNotEmpty() && password.isNotEmpty()) {
+                        scope.launch(Dispatchers.Main) {
+                            authViewModel.loginUser(
+                                AuthUserModel(
+                                    email = email,
+                                    password = password
+                                )
+                            ).collect {
+                                isDialog = when (it) {
+                                    is ResultState.Success -> {
+                                        context.showMsg(it.data)
+                                        navHostController.navigate(home)
+                                        false
+                                    }
+
+                                    is ResultState.Failure -> {
+                                        context.showMsg(it.msg.toString())
+                                        false
+                                    }
+
+                                    is ResultState.Loading -> {
+                                        true
+                                    }
+                                }
+                            }
+                        }
+                    }else{
+                        Toast.makeText(context, "Email & Password must be entered!", Toast.LENGTH_SHORT).show()
+                    }
                 })
 
             TextDesignByAman()
@@ -373,7 +424,6 @@ fun LoginBtnAndText(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 fun LoginPreview() {
     FoodOrderAppTheme {

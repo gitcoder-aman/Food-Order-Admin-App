@@ -31,12 +31,18 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -45,24 +51,43 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.tech.foodorderAdminapp.R
+import com.tech.foodorderAdminapp.common.CommonDialog
 import com.tech.foodorderAdminapp.common.TextDesignByAman
 import com.tech.foodorderAdminapp.common.yeon_sung_regular
+import com.tech.foodorderAdminapp.firebase.firebaseAuth.ui.AuthViewModel
+import com.tech.foodorderAdminapp.firebase.utils.ResultState
 import com.tech.foodorderAdminapp.navigation.add_menu
 import com.tech.foodorderAdminapp.navigation.all_menu_show
 import com.tech.foodorderAdminapp.navigation.create_user_admin
+import com.tech.foodorderAdminapp.navigation.home
+import com.tech.foodorderAdminapp.navigation.login
 import com.tech.foodorderAdminapp.navigation.out_for_delivery
 import com.tech.foodorderAdminapp.navigation.pending_order
 import com.tech.foodorderAdminapp.navigation.profile
 import com.tech.foodorderAdminapp.ui.theme.FoodOrderAppTheme
 import com.tech.foodorderAdminapp.ui.theme.GreenColor
 import com.tech.foodorderAdminapp.ui.theme.darkWhiteColor
+import com.tech.foodorderAdminapp.util.showMsg
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(navHostController: NavHostController) {
 
     val scrollState = rememberScrollState()
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var isDialog by remember {
+        mutableStateOf(false)
+    }
+
+    if (isDialog) {
+        CommonDialog()
+    }
 
     Box(
         modifier = Modifier
@@ -125,7 +150,7 @@ fun HomeScreen(navHostController: NavHostController) {
                         .weight(0.5f),
                     cardName = stringResource(R.string.profile),
                     cardIcon = Icons.Outlined.AccountCircle
-                ){
+                ) {
                     navHostController.navigate(profile)
                 }
 
@@ -137,7 +162,7 @@ fun HomeScreen(navHostController: NavHostController) {
                         .weight(0.5f),
                     cardName = stringResource(R.string.create_new_user),
                     cardIcon = Icons.Outlined.PersonAddAlt
-                ){
+                ) {
                     navHostController.navigate(create_user_admin)
                 }
             }
@@ -154,7 +179,7 @@ fun HomeScreen(navHostController: NavHostController) {
                         .weight(0.5f),
                     cardName = stringResource(R.string.order_dispatch),
                     cardIcon = Icons.Outlined.ShoppingBag
-                ){
+                ) {
                     navHostController.navigate(out_for_delivery)
                 }
 
@@ -165,7 +190,28 @@ fun HomeScreen(navHostController: NavHostController) {
                         .weight(0.5f),
                     cardName = stringResource(R.string.log_out),
                     cardIcon = Icons.Outlined.Logout
-                )
+                ) {
+                    scope.launch(Dispatchers.Main) {
+                        authViewModel.logOut().collect {
+                            isDialog = when (it) {
+                                is ResultState.Success -> {
+                                    context.showMsg(it.data)
+                                    navHostController.navigate(login)
+                                    false
+                                }
+
+                                is ResultState.Failure -> {
+                                    context.showMsg(it.msg.toString())
+                                    false
+                                }
+
+                                is ResultState.Loading -> {
+                                    true
+                                }
+                            }
+                        }
+                    }
+                }
             }
             TextDesignByAman()
         }
@@ -212,7 +258,7 @@ fun StatusCardLayout(navHostController: NavHostController) {
                 icon = Icons.Outlined.PendingActions,
                 centerText = stringResource(R.string.pending_order),
                 bottomText = "30"
-            ){
+            ) {
                 navHostController.navigate(pending_order)
             }
             CardColumnContent(
@@ -220,7 +266,7 @@ fun StatusCardLayout(navHostController: NavHostController) {
                 icon = Icons.Outlined.CloudDone,
                 centerText = stringResource(R.string.completed_order),
                 bottomText = "10"
-            ){
+            ) {
 
             }
             CardColumnContent(
@@ -228,7 +274,7 @@ fun StatusCardLayout(navHostController: NavHostController) {
                 icon = Icons.Outlined.MonetizationOn,
                 centerText = stringResource(R.string.whole_time_earning),
                 bottomText = "$100"
-            ){
+            ) {
 
             }
         }
@@ -245,7 +291,9 @@ fun CardColumnContent(
 ) {
 
     Column(
-        modifier = modifier.padding(15.dp).clickable { onClick() },
+        modifier = modifier
+            .padding(15.dp)
+            .clickable { onClick() },
         horizontalAlignment = CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -321,7 +369,6 @@ fun EachCardLayout(
 }
 
 @Composable
-@Preview
 fun HomePreview() {
     FoodOrderAppTheme {
 //        val navHostController = rememberNavController()

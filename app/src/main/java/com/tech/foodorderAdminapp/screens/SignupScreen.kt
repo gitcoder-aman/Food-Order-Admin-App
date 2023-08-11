@@ -33,6 +33,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,18 +52,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.tech.foodorderAdminapp.R
+import com.tech.foodorderAdminapp.common.CommonDialog
 import com.tech.foodorderAdminapp.common.TextDesignByAman
 import com.tech.foodorderAdminapp.common.lato_regular
 import com.tech.foodorderAdminapp.common.yeon_sung_regular
+import com.tech.foodorderAdminapp.firebase.firebaseAuth.AuthUserModel
+import com.tech.foodorderAdminapp.firebase.firebaseAuth.ui.AuthViewModel
+import com.tech.foodorderAdminapp.firebase.utils.ResultState
 import com.tech.foodorderAdminapp.navigation.home
 import com.tech.foodorderAdminapp.navigation.login
 import com.tech.foodorderAdminapp.navigation.signup
 import com.tech.foodorderAdminapp.ui.theme.FoodOrderAppTheme
 import com.tech.foodorderAdminapp.ui.theme.GreenColor
 import com.tech.foodorderAdminapp.ui.theme.darkWhiteColor
+import com.tech.foodorderAdminapp.util.showMsg
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignupScreen(navHostController: NavHostController) {
@@ -73,11 +83,21 @@ fun SignupScreen(navHostController: NavHostController) {
     var nameOfRestaurant by remember {
         mutableStateOf("")
     }
-    var emailOrPhone by remember {
+    var email by rememberSaveable {
         mutableStateOf("")
     }
-    var password by remember {
+    var password by rememberSaveable {
         mutableStateOf("")
+    }
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var isDialog by remember {
+        mutableStateOf(false)
+    }
+
+    if (isDialog) {
+        CommonDialog()
     }
 
 
@@ -133,11 +153,11 @@ fun SignupScreen(navHostController: NavHostController) {
             Spacer(modifier = Modifier.height(10.dp))
 
             TextFieldLayout(
-                text = emailOrPhone,
-                textFieldTitle = stringResource(R.string.email_or_phone_number),
+                text = email,
+                textFieldTitle = stringResource(R.string.email),
                 icon = R.drawable.mail,
                 onValueChange = {
-                    emailOrPhone = it
+                    email = it
                 })
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -155,7 +175,36 @@ fun SignupScreen(navHostController: NavHostController) {
                 stringResource(R.string.already_have_an_account), noAccount = {
                     navHostController.navigate(login)
                 }, login = {
-                    navHostController.navigate(home)
+
+                    if (email.isNotEmpty() && password.isNotEmpty()) {
+                        scope.launch(Dispatchers.Main) {
+                            authViewModel.createUser(
+                                AuthUserModel(
+                                    email = email,
+                                    password = password
+                                )
+                            ).collect {
+                                isDialog = when (it) {
+                                    is ResultState.Success -> {
+                                        context.showMsg(it.data)
+                                        navHostController.navigate(login)
+                                        false
+                                    }
+
+                                    is ResultState.Failure -> {
+                                        context.showMsg(it.msg.toString())
+                                        false
+                                    }
+
+                                    is ResultState.Loading -> {
+                                        true
+                                    }
+                                }
+                            }
+                        }
+                    }else{
+                        Toast.makeText(context, "Email & Password must be entered!", Toast.LENGTH_SHORT).show()
+                    }
                 })
 
             TextDesignByAman()
@@ -170,7 +219,18 @@ fun SignupScreen(navHostController: NavHostController) {
 fun LocationLayout() {
 
     val listOptions =
-        listOf("Delhi", "Mumbai", "Chennai", "Kolkata", "Hyderabad", "Bengaluru", "Pune","Bihar","Lucknow","Punjab")
+        listOf(
+            "Delhi",
+            "Mumbai",
+            "Chennai",
+            "Kolkata",
+            "Hyderabad",
+            "Bengaluru",
+            "Pune",
+            "Bihar",
+            "Lucknow",
+            "Punjab"
+        )
     var expandedState by remember {
         mutableStateOf(false)
     }
@@ -180,8 +240,6 @@ fun LocationLayout() {
     var mTextFieldSize by remember {
         mutableStateOf(Size.Zero)
     }
-
-    val mContext = LocalContext.current
 
     TextField(
         value = selectionOption,
@@ -260,7 +318,6 @@ fun LocationLayout() {
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 fun SignupPreview() {
     FoodOrderAppTheme {

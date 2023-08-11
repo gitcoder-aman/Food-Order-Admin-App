@@ -7,6 +7,9 @@ data class RealtimeModelResponse(
 ){
     data class RealtimeItems(
         val itemName : String = "",
-        val price : String = ""
+        val description : String = "",
+        val itemIngredients : String = "",
+        val price : String = "",
+        val itemImage : String = ""
     )
 }

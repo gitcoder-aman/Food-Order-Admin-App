@@ -19,7 +19,6 @@
     <string name="location">Location</string>
     <string name="create_account">Create Account</string>
     <string name="already_have_an_account">Already Have An Account?</string>
-    <string name="email_or_phone_number">Email or Phone Number</string>
     <string name="location_choose">Location Choose</string>
     <string name="pending_order">Pending Order</string>
     <string name="completed_order">Completed Order</string>
@@ -55,4 +54,9 @@
     <string name="create_new_user_admin">Create New User Admin</string>
     <string name="pending_orders">Pending Orders</string>
     <string name="accept">Accept</string>
+    <string name="update">Update</string>
+    <string name="description">Description</string>
+    <string name="yes">Yes</string>
+    <string name="are_you_sure_delete_this_item">Are you sure delete this item.</string>
+    <string name="no">No</string>
 </resources>

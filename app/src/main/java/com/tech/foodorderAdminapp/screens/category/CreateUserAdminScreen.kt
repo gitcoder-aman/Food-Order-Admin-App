@@ -73,7 +73,7 @@ fun CreateUserAdminScreen(navHostController: NavHostController) {
             Spacer(modifier = Modifier.height(10.dp))
             AddItemTextField(
                 text = userEmailOrPhone,
-                titleText = stringResource(id = R.string.email_or_phone_number),
+                titleText = stringResource(id = R.string.email),
                 icon = R.drawable.mail,
                 onValueChange = {
                     userEmailOrPhone = it

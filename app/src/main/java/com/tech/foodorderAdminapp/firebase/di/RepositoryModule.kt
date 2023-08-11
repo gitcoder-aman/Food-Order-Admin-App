@@ -1,5 +1,7 @@
 package com.tech.foodorderAdminapp.firebase.di
 
+import com.tech.foodorderAdminapp.firebase.firebaseAuth.repository.AuthRepository
+import com.tech.foodorderAdminapp.firebase.firebaseAuth.repository.AuthRepositoryImpl
 import com.tech.foodorderAdminapp.firebase.firebaseRealtimeDb.repository.RealtimeDbRepository
 import com.tech.foodorderAdminapp.firebase.firebaseRealtimeDb.repository.RealtimeRepository
 import dagger.Binds
@@ -17,4 +19,9 @@ abstract class RepositoryModule {
     abstract fun providesRealtimeRepository(
         repo : RealtimeDbRepository
     ) : RealtimeRepository
+
+    @Binds
+    abstract fun providesFirebaseAuthRepository(
+        repo:AuthRepositoryImpl
+    ):AuthRepository
 }
