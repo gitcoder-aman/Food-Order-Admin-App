@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.tech.foodorderAdminapp.screens
+package com.tech.foodorderAdminapp.screens.loginScreen
 
 import android.widget.Toast
 import androidx.annotation.DrawableRes
@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,13 +57,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.common.internal.service.Common
 import com.tech.foodorderAdminapp.R
 import com.tech.foodorderAdminapp.common.CommonDialog
 import com.tech.foodorderAdminapp.common.TextDesignByAman
@@ -70,6 +69,7 @@ import com.tech.foodorderAdminapp.common.lato_bold
 import com.tech.foodorderAdminapp.common.lato_regular
 import com.tech.foodorderAdminapp.common.yeon_sung_regular
 import com.tech.foodorderAdminapp.firebase.firebaseAuth.AuthUserModel
+import com.tech.foodorderAdminapp.firebase.firebaseAuth.googleSignIn.SignInState
 import com.tech.foodorderAdminapp.firebase.firebaseAuth.ui.AuthViewModel
 import com.tech.foodorderAdminapp.firebase.utils.ResultState
 import com.tech.foodorderAdminapp.navigation.home
@@ -82,11 +82,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(navHostController: NavHostController) {
+fun LoginScreen(
+    state: SignInState,
+    onSignInClick: () -> Unit, navHostController: NavHostController
+) {
 
     val authViewModel: AuthViewModel = hiltViewModel()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
+
     var isDialog by remember {
         mutableStateOf(false)
     }
@@ -103,6 +108,12 @@ fun LoginScreen(navHostController: NavHostController) {
     }
 
     val scrollState = rememberScrollState()
+
+    LaunchedEffect(key1 = state.signInError){
+        state.signInError?.let {error->
+            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -151,13 +162,17 @@ fun LoginScreen(navHostController: NavHostController) {
                     stringResource(R.string.facebook),
                     R.drawable.facebook,
                     modifier = Modifier.weight(0.5f)
-                )
+                ) {
+
+                }
                 Spacer(modifier = Modifier.width(10.dp))
                 RowIconButton(
                     stringResource(R.string.google),
                     R.drawable.google,
                     modifier = Modifier.weight(0.5f)
-                )
+                ) {
+                    onSignInClick()
+                }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -168,7 +183,7 @@ fun LoginScreen(navHostController: NavHostController) {
                     navHostController.navigate(signup)
                 },
                 login = {
-                    if(email.isNotEmpty() && password.isNotEmpty()) {
+                    if (email.isNotEmpty() && password.isNotEmpty()) {
                         scope.launch(Dispatchers.Main) {
                             authViewModel.loginUser(
                                 AuthUserModel(
@@ -194,8 +209,12 @@ fun LoginScreen(navHostController: NavHostController) {
                                 }
                             }
                         }
-                    }else{
-                        Toast.makeText(context, "Email & Password must be entered!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Email & Password must be entered!",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 })
 
@@ -341,9 +360,14 @@ fun ContinueWithText() {
 }
 
 @Composable
-fun RowIconButton(buttonName: String, @DrawableRes icon: Int, modifier: Modifier = Modifier) {
+fun RowIconButton(
+    buttonName: String,
+    @DrawableRes icon: Int,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Button(
-        onClick = { /*TODO*/ },
+        onClick = { onClick() },
         modifier = modifier
             .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
@@ -428,6 +452,6 @@ fun LoginBtnAndText(
 fun LoginPreview() {
     FoodOrderAppTheme {
         val navHostController = rememberNavController()
-        LoginScreen(navHostController = navHostController)
+//        LoginScreen(navHostController = navHostController)
     }
 }

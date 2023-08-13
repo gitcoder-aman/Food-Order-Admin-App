@@ -1,5 +1,6 @@
 package com.tech.foodorderAdminapp.firebase.di
 
+import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
@@ -9,6 +10,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.tasks.await
 import javax.inject.Singleton
 
 //dependency provide of Firebase here
@@ -23,4 +25,5 @@ object FirebaseModule {
     @Singleton
     @Provides
     fun providesFirebaseAuth():FirebaseAuth = Firebase.auth
+
 }

@@ -196,6 +196,8 @@ fun HomeScreen(navHostController: NavHostController) {
                             isDialog = when (it) {
                                 is ResultState.Success -> {
                                     context.showMsg(it.data)
+                                    authViewModel.resetState()  //when google logout for apply
+                                    navHostController.clearBackStack(home)
                                     navHostController.navigate(login)
                                     false
                                 }

@@ -23,8 +23,6 @@ import androidx.compose.material.icons.filled.ArrowCircleDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -48,7 +46,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
@@ -63,9 +60,9 @@ import com.tech.foodorderAdminapp.common.yeon_sung_regular
 import com.tech.foodorderAdminapp.firebase.firebaseAuth.AuthUserModel
 import com.tech.foodorderAdminapp.firebase.firebaseAuth.ui.AuthViewModel
 import com.tech.foodorderAdminapp.firebase.utils.ResultState
-import com.tech.foodorderAdminapp.navigation.home
 import com.tech.foodorderAdminapp.navigation.login
-import com.tech.foodorderAdminapp.navigation.signup
+import com.tech.foodorderAdminapp.screens.loginScreen.LoginBtnAndText
+import com.tech.foodorderAdminapp.screens.loginScreen.TextFieldLayout
 import com.tech.foodorderAdminapp.ui.theme.FoodOrderAppTheme
 import com.tech.foodorderAdminapp.ui.theme.GreenColor
 import com.tech.foodorderAdminapp.ui.theme.darkWhiteColor
@@ -117,7 +114,7 @@ fun SignupScreen(navHostController: NavHostController) {
             verticalArrangement = Arrangement.Center
         ) {
 
-            Header(stringResource(R.string.sign_up_here_for_you))
+            com.tech.foodorderAdminapp.screens.loginScreen.Header(stringResource(R.string.sign_up_here_for_you))
 
             Spacer(modifier = Modifier.height(20.dp))
 

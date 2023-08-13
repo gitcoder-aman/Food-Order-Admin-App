@@ -1,5 +1,7 @@
 package com.tech.foodorderAdminapp.screens
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,21 +27,35 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.google.android.gms.auth.api.identity.Identity
 import com.tech.foodorderAdminapp.R
 import com.tech.foodorderAdminapp.common.TextDesignByAman
 import com.tech.foodorderAdminapp.common.lato_bold
 import com.tech.foodorderAdminapp.common.lato_regular
 import com.tech.foodorderAdminapp.common.yeon_sung_regular
+import com.tech.foodorderAdminapp.firebase.firebaseAuth.googleSignIn.GoogleAuthUiClient
+import com.tech.foodorderAdminapp.navigation.home
 import com.tech.foodorderAdminapp.navigation.login
 import com.tech.foodorderAdminapp.ui.theme.GreenColor
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navHostController : NavHostController) {
+fun SplashScreen(context : Context,navHostController : NavHostController) {
 
+    val googleAuthUiClient by lazy {
+        GoogleAuthUiClient(
+            context = context,
+            oneTapClient = Identity.getSignInClient(context)
+        )
+    }
     LaunchedEffect(key1 = Unit, block = {  //navigate to home screen after 2 sec
-        delay(2000)
-        navHostController.navigate(login)
+        delay(1000)
+        if (googleAuthUiClient.getSignedInUser() != null) {
+            navHostController.navigate(home)
+        }else{
+            navHostController.navigate(login)
+        }
+        Log.d("@@@@", "FoodAdminNavigation: ${googleAuthUiClient.getSignedInUser()}")
     })
     Box(
         modifier = Modifier
