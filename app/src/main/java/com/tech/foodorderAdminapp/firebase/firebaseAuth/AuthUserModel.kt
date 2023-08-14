@@ -1,6 +1,11 @@
 package com.tech.foodorderAdminapp.firebase.firebaseAuth
 
 data class AuthUserModel(
-    val email : String = "",
-    val password : String = ""
+    var email : String = "",
+    var password : String = "",
+    var ownerName : String = "",
+    val restaurantName : String = "",
+    var ownerAddress : String = "",
+    var ownerPhone : String = "",
+    var uid : String = "",
 )

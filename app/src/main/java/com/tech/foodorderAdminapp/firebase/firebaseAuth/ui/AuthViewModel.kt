@@ -1,6 +1,7 @@
 package com.tech.foodorderAdminapp.firebase.firebaseAuth.ui
 
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.tech.foodorderAdminapp.firebase.firebaseAuth.AuthUserModel
 import com.tech.foodorderAdminapp.firebase.firebaseAuth.googleSignIn.SignInResult
 import com.tech.foodorderAdminapp.firebase.firebaseAuth.googleSignIn.SignInState
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val repo: AuthRepository
+    private val repo: AuthRepository,
+    private val auth : FirebaseAuth
 ) : ViewModel(){
 
     fun createUser(authUserModel: AuthUserModel)  = repo.createUser(authUserModel)
@@ -21,6 +23,8 @@ class AuthViewModel @Inject constructor(
     fun loginUser(authUserModel: AuthUserModel) = repo.loginUser(authUserModel)
 
     fun logOut() = repo.logout()
+
+    fun getAuthInstance()  = auth
 
     //for google signIn
     val _state = MutableStateFlow(SignInState())

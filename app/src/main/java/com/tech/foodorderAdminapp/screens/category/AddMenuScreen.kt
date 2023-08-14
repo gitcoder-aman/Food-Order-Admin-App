@@ -1,10 +1,10 @@
 package com.tech.foodorderAdminapp.screens.category
 
-import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -64,12 +64,13 @@ import com.tech.foodorderAdminapp.R
 import com.tech.foodorderAdminapp.common.CommonDialog
 import com.tech.foodorderAdminapp.common.lato_regular
 import com.tech.foodorderAdminapp.common.yeon_sung_regular
-import com.tech.foodorderAdminapp.firebase.firebaseRealtimeDb.RealtimeModelResponse
+import com.tech.foodorderAdminapp.firebase.firebaseRealtimeDb.model.RealtimeModelResponse
 import com.tech.foodorderAdminapp.firebase.firebaseRealtimeDb.ui.RealtimeViewModel
 import com.tech.foodorderAdminapp.firebase.utils.ResultState
 import com.tech.foodorderAdminapp.ui.theme.FoodOrderAppTheme
 import com.tech.foodorderAdminapp.ui.theme.GreenColor
 import com.tech.foodorderAdminapp.ui.theme.darkWhiteColor
+import com.tech.foodorderAdminapp.util.Variables
 import com.tech.foodorderAdminapp.util.showMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -143,7 +144,8 @@ fun AddMenuScreen(navHostController: NavHostController) {
 
             Spacer(modifier = Modifier.height(5.dp))
 
-            SelectItemImage()
+            SelectItemImageSection()
+
             Spacer(modifier = Modifier.height(5.dp))
 
             ShortDescription(itemIngredients, description, onDescChange = { desc ->
@@ -159,14 +161,16 @@ fun AddMenuScreen(navHostController: NavHostController) {
                     //here perform through button
                     //in save data in firebase realtime database
                     scope.launch(Dispatchers.Main) {
+
                         viewModel.insert(
 
                             RealtimeModelResponse.RealtimeItems(
                                 itemName = itemName,
                                 price = itemPrice,
                                 description = description,
-                                itemIngredients = itemIngredients
-                            )
+                                itemIngredients = itemIngredients,
+                                itemImage = ""
+                            ), bitmap = Variables.bitmap!!
                         ).collect {
                             when (it) {
                                 is ResultState.Success -> {
@@ -176,6 +180,7 @@ fun AddMenuScreen(navHostController: NavHostController) {
                                     itemPrice = ""
                                     itemIngredients = ""
                                     description = ""
+                                    Variables.bitmap = null
                                 }
 
                                 is ResultState.Failure -> {
@@ -189,8 +194,9 @@ fun AddMenuScreen(navHostController: NavHostController) {
                             }
                         }
                     }
-                }else{
-                    Toast.makeText(context, "Item Name & Price must insert.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Item Name & Price must insert.", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
 
@@ -282,20 +288,7 @@ fun AddItemTextField(
 }
 
 @Composable
-fun SelectItemImage() {
-
-    var imageUri by remember {
-        mutableStateOf<Uri?>(null)
-    }
-    val context = LocalContext.current
-    var bitmap by remember {
-        mutableStateOf<Bitmap?>(null)
-    }
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = {
-            imageUri = it
-        })
+fun SelectItemImageSection() {
 
     Column(
         modifier = Modifier
@@ -305,6 +298,16 @@ fun SelectItemImage() {
         verticalArrangement = Arrangement.Center
     ) {
 
+        var imageUri by remember {
+            mutableStateOf<Uri?>(null)
+        }
+        val context = LocalContext.current
+
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent(),
+            onResult = {
+                imageUri = it
+            })
         Row(
             modifier = Modifier
                 .shadow(1.dp, shape = RoundedCornerShape(8.dp))
@@ -324,7 +327,6 @@ fun SelectItemImage() {
 
             IconButton(onClick = {
                 launcher.launch("image/*")
-
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.pluse_round),
@@ -334,21 +336,23 @@ fun SelectItemImage() {
             }
         }
         imageUri?.let {
-            bitmap = if (Build.VERSION.SDK_INT < 28) {
+            Variables.bitmap = if (Build.VERSION.SDK_INT < 28) {
                 MediaStore.Images.Media.getBitmap(context.contentResolver, it)
             } else {
                 val source = ImageDecoder.createSource(context.contentResolver, it)
                 ImageDecoder.decodeBitmap(source)
             }
+
             Spacer(modifier = Modifier.height(5.dp))
             Image(
-                bitmap = bitmap!!.asImageBitmap(),
+                bitmap = Variables.bitmap!!.asImageBitmap(),
                 contentDescription = "",
                 modifier = Modifier
                     .height(110.dp)
                     .width(175.dp)
             )
         }
+        Log.d("@@@@", "GetImageFromGallery: ${Variables.bitmap}")
     }
 }
 

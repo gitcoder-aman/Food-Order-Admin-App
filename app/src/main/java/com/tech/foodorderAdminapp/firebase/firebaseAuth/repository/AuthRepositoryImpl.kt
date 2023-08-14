@@ -2,21 +2,17 @@ package com.tech.foodorderAdminapp.firebase.firebaseAuth.repository
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import com.tech.foodorderAdminapp.firebase.firebaseAuth.AuthUserModel
-import com.tech.foodorderAdminapp.firebase.firebaseAuth.googleSignIn.SignInResult
-import com.tech.foodorderAdminapp.firebase.firebaseAuth.googleSignIn.SignInState
 import com.tech.foodorderAdminapp.firebase.utils.ResultState
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val db: DatabaseReference
 ) : AuthRepository {
     override fun createUser(authUserModel: AuthUserModel): Flow<ResultState<String>> =
         callbackFlow {
@@ -25,6 +21,15 @@ class AuthRepositoryImpl @Inject constructor(
             auth.createUserWithEmailAndPassword(authUserModel.email, authUserModel.password)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
+
+                        authUserModel.uid = auth.currentUser?.uid!!
+                        //email password store in user_details
+                        db.child("user_details").child(auth.currentUser?.uid!!)
+                            .setValue(authUserModel).addOnCompleteListener {
+                            trySend(ResultState.Success("User Create Successfully"))
+                        }.addOnFailureListener {
+                            trySend(ResultState.Failure(it))
+                        }
                         trySend(ResultState.Success("User Create Successfully"))
                         Log.d("main", "createUser: ${auth.currentUser?.uid}")
                     }

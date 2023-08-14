@@ -1,13 +1,13 @@
 package com.tech.foodorderAdminapp.firebase.firebaseRealtimeDb.ui
 
+import android.graphics.Bitmap
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tech.foodorderAdminapp.firebase.firebaseRealtimeDb.RealtimeModelResponse
+import com.tech.foodorderAdminapp.firebase.firebaseAuth.AuthUserModel
+import com.tech.foodorderAdminapp.firebase.firebaseRealtimeDb.model.RealtimeModelResponse
 import com.tech.foodorderAdminapp.firebase.firebaseRealtimeDb.repository.RealtimeRepository
 import com.tech.foodorderAdminapp.firebase.utils.ResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +25,7 @@ class RealtimeViewModel @Inject constructor(
     val res: State<ItemState> = _res  //observe in ui for taking res
 
     //insert data
-    fun insert(items: RealtimeModelResponse.RealtimeItems) = repo.insert(items)
+    fun insert(items: RealtimeModelResponse.RealtimeItems, bitmap: Bitmap) = repo.insert(items,bitmap)
 
     private val _updateRes : MutableState<RealtimeModelResponse> = mutableStateOf(
         RealtimeModelResponse(items = RealtimeModelResponse.RealtimeItems())
@@ -68,10 +68,13 @@ class RealtimeViewModel @Inject constructor(
     fun delete(key : String) =  repo.delete(key)
 
     //update data
-    fun update(item : RealtimeModelResponse) = repo.update(item)
+     fun update(item : RealtimeModelResponse) = repo.update(item)
+
+     fun fetchUserData(uid : String) = repo.fetchUserData(uid)
+     fun userDataUpdate(authUserModel : AuthUserModel) = repo.userDataUpdate(authUserModel)
 }
 
-data class ItemState(
+data class  ItemState(
     val item: List<RealtimeModelResponse> = emptyList(),
     val error: String = "",
     val isLoading: Boolean = false

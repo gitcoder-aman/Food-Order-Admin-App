@@ -1,5 +1,6 @@
 package com.tech.foodorderAdminapp.screens.category
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,37 +21,62 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.tech.foodorderAdminapp.R
 import com.tech.foodorderAdminapp.common.ButtonComponent
 import com.tech.foodorderAdminapp.common.TextComponent
 import com.tech.foodorderAdminapp.common.TextDesignByAman
 import com.tech.foodorderAdminapp.common.lato_regular
 import com.tech.foodorderAdminapp.common.yeon_sung_regular
+import com.tech.foodorderAdminapp.firebase.firebaseAuth.AuthUserModel
+import com.tech.foodorderAdminapp.firebase.firebaseRealtimeDb.ui.RealtimeViewModel
+import com.tech.foodorderAdminapp.firebase.utils.ResultState
 import com.tech.foodorderAdminapp.ui.theme.FoodOrderAppTheme
 import com.tech.foodorderAdminapp.ui.theme.GreenColor
 import com.tech.foodorderAdminapp.ui.theme.darkWhiteColor
+import com.tech.foodorderAdminapp.util.showMsg
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @Composable
 fun ProfileScreen(navHostController: NavHostController) {
 
     val scrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val viewModel: RealtimeViewModel = hiltViewModel()
+
+    val auth: FirebaseAuth = Firebase.auth
+
     var userName by remember {
+        mutableStateOf("")
+    }
+    var restaurantName by remember {
         mutableStateOf("")
     }
     var userAddress by remember {
@@ -79,8 +105,7 @@ fun ProfileScreen(navHostController: NavHostController) {
                 .fillMaxSize()
                 .padding(10.dp)
                 .verticalScroll(scrollState)
-                .align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CategoryHeader(titleText = stringResource(R.string.admin_profile)) {
                 navHostController.navigateUp()
@@ -93,12 +118,46 @@ fun ProfileScreen(navHostController: NavHostController) {
             }
             Spacer(modifier = Modifier.height(20.dp))
 
+            LaunchedEffect(key1 = Unit) {
+                scope.launch(Dispatchers.Main) {
+                    viewModel.fetchUserData(auth.uid!!).collect {
+                        when (it) {
+                            is ResultState.Success -> {
+                                userName = it.data.ownerName
+                                restaurantName = it.data.restaurantName
+                                userAddress = it.data.ownerAddress
+                                userEmail = it.data.email
+                                userPassword = it.data.password
+                                userPhone = it.data.ownerPhone
+                            }
+
+                            is ResultState.Failure -> {
+                                context.showMsg(msg = it.msg.toString())
+                            }
+
+                            is ResultState.Loading -> {
+                            }
+                        }
+                    }
+                }
+            }
+
+            Log.d("fetchData", "onDataChange: {${auth.currentUser?.uid}}")
+
             ProfileTextLayout(
                 text = userName,
                 trailingText = stringResource(id = R.string.name),
                 textFieldRead = textFieldRead
             ) {
                 userName = it
+            }
+
+            ProfileTextLayout(
+                text = restaurantName ,
+                trailingText = stringResource(id = R.string.name_of_restaurant),
+                textFieldRead = textFieldRead
+            ) {
+                restaurantName = it
             }
 
             Spacer(modifier = Modifier.height(5.dp))
@@ -115,7 +174,7 @@ fun ProfileScreen(navHostController: NavHostController) {
             ProfileTextLayout(
                 text = userEmail,
                 trailingText = stringResource(id = R.string.email),
-                textFieldRead = textFieldRead
+                textFieldRead = true
             ) {
                 userEmail = it
             }
@@ -139,7 +198,35 @@ fun ProfileScreen(navHostController: NavHostController) {
             }
 
             Spacer(modifier = Modifier.height(30.dp))
-            SaveButton()
+            SaveButton {
+                scope.launch(Dispatchers.Main) {
+                    viewModel.userDataUpdate(
+                        AuthUserModel(
+                            email = userEmail,
+                            password = userPassword,
+                            ownerName = userName,
+                            restaurantName = restaurantName,
+                            ownerPhone = userPhone,
+                            ownerAddress = userAddress,
+                            uid = auth.uid!!
+                        )
+                    ).collect{
+                        when (it) {
+                            is ResultState.Success -> {
+                                context.showMsg(it.data)
+                                textFieldRead = true
+                            }
+
+                            is ResultState.Failure -> {
+                                context.showMsg(msg = it.msg.toString())
+                            }
+
+                            is ResultState.Loading -> {
+                            }
+                        }
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(30.dp))
 
@@ -180,10 +267,7 @@ fun RowText(editTextOnClick: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileTextLayout(
-    text: String,
-    trailingText: String,
-    textFieldRead: Boolean,
-    onValueChange: (String) -> Unit
+    text: String, trailingText: String, textFieldRead: Boolean, onValueChange: (String) -> Unit
 ) {
 
     TextField(
@@ -203,8 +287,7 @@ fun ProfileTextLayout(
             cursorColor = GreenColor,
             focusedTrailingIconColor = Color.Black,
             selectionColors = TextSelectionColors(
-                handleColor = GreenColor,
-                backgroundColor = GreenColor
+                handleColor = GreenColor, backgroundColor = GreenColor
             )
         ),
         leadingIcon = {
@@ -216,34 +299,30 @@ fun ProfileTextLayout(
                 fontFamily = yeon_sung_regular,
                 color = Color.Black
             )
-        }, readOnly = textFieldRead, enabled = !textFieldRead
+        },
+        readOnly = textFieldRead,
+        enabled = !textFieldRead
     )
 }
 
 @Composable
-fun SaveButton() {
+fun SaveButton(saveBtnOnClick: () -> Unit) {
     ButtonComponent(
-        text = stringResource(R.string.save_profile),
-        elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 8.dp,
-            pressedElevation = 1.dp,
-            focusedElevation = 1.dp
-        ),
-        color = ButtonDefaults.buttonColors(
-            containerColor = Color.White,
-            contentColor = GreenColor
+        text = stringResource(R.string.save_profile), elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 8.dp, pressedElevation = 1.dp, focusedElevation = 1.dp
+        ), color = ButtonDefaults.buttonColors(
+            containerColor = Color.White, contentColor = GreenColor
         )
     ) {
-        //save perform here after clicked this button
+        saveBtnOnClick()
     }
 }
 
 @Composable
-@Preview
 fun ProfileScreenPreview() {
     FoodOrderAppTheme {
         val navHostController = rememberNavController()
 
-        ProfileScreen(navHostController = navHostController)
+//        ProfileScreen(navHostController = navHostController)
     }
 }

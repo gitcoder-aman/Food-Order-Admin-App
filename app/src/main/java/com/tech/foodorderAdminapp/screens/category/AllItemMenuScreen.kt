@@ -2,7 +2,6 @@ package com.tech.foodorderAdminapp.screens.category
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +28,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -48,20 +46,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
 import com.tech.foodorderAdminapp.R
 import com.tech.foodorderAdminapp.common.CommonDialog
 import com.tech.foodorderAdminapp.common.TextComponent
-import com.tech.foodorderAdminapp.common.lato_bold
-import com.tech.foodorderAdminapp.common.lato_regular
 import com.tech.foodorderAdminapp.common.yeon_sung_regular
-import com.tech.foodorderAdminapp.firebase.firebaseRealtimeDb.RealtimeModelResponse
+import com.tech.foodorderAdminapp.firebase.firebaseRealtimeDb.model.RealtimeModelResponse
 import com.tech.foodorderAdminapp.firebase.firebaseRealtimeDb.ui.RealtimeViewModel
 import com.tech.foodorderAdminapp.firebase.utils.ResultState
 import com.tech.foodorderAdminapp.ui.theme.FoodOrderAppTheme
@@ -352,6 +348,7 @@ fun Update(
     }
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun ItemEachView(
     itemModel: RealtimeModelResponse.RealtimeItems,
@@ -374,7 +371,7 @@ fun ItemEachView(
             horizontalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = painterResource(R.drawable.menu1),
+                painter = rememberImagePainter(itemModel.itemImage),
                 contentDescription = "",
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier

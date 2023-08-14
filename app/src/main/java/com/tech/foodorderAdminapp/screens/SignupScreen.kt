@@ -61,8 +61,6 @@ import com.tech.foodorderAdminapp.firebase.firebaseAuth.AuthUserModel
 import com.tech.foodorderAdminapp.firebase.firebaseAuth.ui.AuthViewModel
 import com.tech.foodorderAdminapp.firebase.utils.ResultState
 import com.tech.foodorderAdminapp.navigation.login
-import com.tech.foodorderAdminapp.screens.loginScreen.LoginBtnAndText
-import com.tech.foodorderAdminapp.screens.loginScreen.TextFieldLayout
 import com.tech.foodorderAdminapp.ui.theme.FoodOrderAppTheme
 import com.tech.foodorderAdminapp.ui.theme.GreenColor
 import com.tech.foodorderAdminapp.ui.theme.darkWhiteColor
@@ -114,7 +112,7 @@ fun SignupScreen(navHostController: NavHostController) {
             verticalArrangement = Arrangement.Center
         ) {
 
-            com.tech.foodorderAdminapp.screens.loginScreen.Header(stringResource(R.string.sign_up_here_for_you))
+            Header(stringResource(R.string.sign_up_here_for_you))
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -128,7 +126,7 @@ fun SignupScreen(navHostController: NavHostController) {
                     )
                 )
             }
-            LocationLayout()
+            val location = LocationLayout()
             Spacer(modifier = Modifier.height(10.dp))
 
             TextFieldLayout(
@@ -178,7 +176,10 @@ fun SignupScreen(navHostController: NavHostController) {
                             authViewModel.createUser(
                                 AuthUserModel(
                                     email = email,
-                                    password = password
+                                    password = password,
+                                    ownerName = nameOfOwner,
+                                    restaurantName = nameOfRestaurant,
+                                    ownerAddress = location,
                                 )
                             ).collect {
                                 isDialog = when (it) {
@@ -213,7 +214,7 @@ fun SignupScreen(navHostController: NavHostController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LocationLayout() {
+fun LocationLayout() : String {
 
     val listOptions =
         listOf(
@@ -313,6 +314,7 @@ fun LocationLayout() {
             })
         }
     }
+    return selectionOption
 }
 
 @Composable

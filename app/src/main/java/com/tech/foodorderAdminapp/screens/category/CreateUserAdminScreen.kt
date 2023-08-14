@@ -23,7 +23,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.tech.foodorderAdminapp.R
 import com.tech.foodorderAdminapp.common.TextDesignByAman
-import com.tech.foodorderAdminapp.screens.loginScreen.Header
+import com.tech.foodorderAdminapp.screens.Header
 import com.tech.foodorderAdminapp.ui.theme.FoodOrderAppTheme
 import com.tech.foodorderAdminapp.ui.theme.darkWhiteColor
 

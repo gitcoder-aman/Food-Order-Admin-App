@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.tech.foodorderAdminapp.screens.loginScreen
+package com.tech.foodorderAdminapp.screens
 
 import android.widget.Toast
 import androidx.annotation.DrawableRes
